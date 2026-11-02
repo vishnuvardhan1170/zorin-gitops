@@ -1,0 +1,103 @@
+replicaCount: 1
+
+image:
+  repository: vishnusai1/zorin
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+config:
+  MONGO_URI: "mongodb://zorin-mongo:27017/zorin"
+  MONGO_DB: "zorin"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+# --- Canary / Rollouts ---
+rollouts:
+  enabled: false
+  strategy:
+    canary:
+      steps:
+        - setWeight: 10
+        - pause: { duration: 5m }
+        - setWeight: 30
+        - pause: { duration: 5m }
+        - setWeight: 60
+        - pause: { duration: 5m }
+        - setWeight: 100
+  analysis:
+    enabled: true
+    interval: 1m
+    successCondition: "result[0] >= 0.95"
+    prometheusAddress: "http://prometheus-kube-prometheus-prometheus.monitoring.svc:9090"
+    query: |
+      sum(rate(http_requests_total{status!~"5.."}[5m])) /
+      sum(rate(http_requests_total[5m]))
+
+mongoDeployment:
+  enabled: true
+  image:
+    repository: mongo
+    tag: "8.2"
+  auth:
+    enabled: false
+  persistence:
+    enabled: true
+    size: 10Gi
+    accessModes:
+      - ReadWriteOnce
+    storageClassName: ""
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+mongoExpress:
+  enabled: true
+  image:
+    repository: mongo-express
+    tag: "1.0.2-20"
+  port: 8081
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+ingress:
+  enabled: true
+  className: alb
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/target-type: ip
+  hosts:
+    - host: zorin.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  mongoExpressHost: zorin-mongo.example.com
+
+serviceAccount:
+  create: true
+  name: zorin-sa
+
+namespace: zorin
+
+monitoring:
+  enabled: true   

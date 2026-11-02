@@ -1,0 +1,19 @@
+{{- if .Values.mongoDeployment.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "zorin.fullname" . }}-mongo
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "zorin.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - port: 27017
+      targetPort: 27017
+      protocol: TCP
+      name: mongodb
+  selector:
+    app: zorin-mongo
+{{- end }}

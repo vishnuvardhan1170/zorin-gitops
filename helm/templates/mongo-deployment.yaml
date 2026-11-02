@@ -1,0 +1,50 @@
+{{- if .Values.mongoDeployment.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "zorin.fullname" . }}-mongo
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "zorin.labels" . | nindent 4 }}
+    app: zorin-mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zorin-mongo
+  template:
+    metadata:
+      labels:
+        {{- include "zorin.selectorLabels" . | nindent 8 }}
+        app: zorin-mongo
+    spec:
+      containers:
+        - name: mongo
+          image: "{{ .Values.mongoDeployment.image.repository }}:{{ .Values.mongoDeployment.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 27017
+              name: mongodb
+          volumeMounts:
+            - name: mongo-storage
+              mountPath: /data/db
+          {{- if .Values.mongoDeployment.auth.enabled }}
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "zorin.fullname" . }}-mongo-credentials
+                  key: username
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "zorin.fullname" . }}-mongo-credentials
+                  key: password
+          {{- end }}
+          resources:
+            {{- toYaml .Values.mongoDeployment.resources | nindent 12 }}
+      volumes:
+        - name: mongo-storage
+          persistentVolumeClaim:
+            claimName: {{ include "zorin.fullname" . }}-mongo-pvc
+{{- end }}

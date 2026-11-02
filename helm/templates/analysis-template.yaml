@@ -1,0 +1,17 @@
+{{- if .Values.rollouts.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: success-rate
+  namespace: {{ .Values.namespace }}
+spec:
+  metrics:
+    - name: success-rate
+      interval: {{ .Values.rollouts.analysis.interval }}
+      successCondition: {{ .Values.rollouts.analysis.successCondition | quote }}
+      failureLimit: 3
+      provider:
+        prometheus:
+          address: {{ .Values.rollouts.analysis.prometheusAddress }}
+          query: {{ .Values.rollouts.analysis.query | indent 10 }}
+{{- end }}   

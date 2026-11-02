@@ -1,0 +1,14 @@
+apiVersion: v2
+name: zorin
+description: Python web app with MongoDB - Enterprise grade microservices
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+maintainers:
+  - name: zorin
+    email: zorin@example.com
+keywords:
+  - flask
+  - mongodb
+  - microservices
+  - kubernetes

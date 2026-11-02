@@ -1,0 +1,18 @@
+{{- if .Values.mongoDeployment.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "zorin.fullname" . }}-mongo-pvc
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "zorin.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    {{- toYaml .Values.mongoDeployment.persistence.accessModes | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .Values.mongoDeployment.persistence.size }}
+  {{- if .Values.mongoDeployment.persistence.storageClassName }}
+  storageClassName: {{ .Values.mongoDeployment.persistence.storageClassName }}
+  {{- end }}
+{{- end }}
