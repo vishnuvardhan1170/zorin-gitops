@@ -1,0 +1,52 @@
+namespace: zorin
+
+replicaCount: 2
+
+image:
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+
+rollouts:
+  enabled: true
+  strategy:
+    canary:
+      steps:
+        - setWeight: 10
+        - pause: { duration: 5m }
+        - setWeight: 30
+        - pause: { duration: 5m }
+        - setWeight: 60
+        - pause: { duration: 5m }
+        - setWeight: 100
+  analysis:
+    enabled: true
+    interval: 1m
+    successCondition: "result[0] >= 0.95"
+    failureLimit: 3
+    prometheusAddress: "http://prometheus-kube-prometheus-prometheus.monitoring.svc:9090"
+    query: |
+      sum(rate(http_requests_total{status!~"5.."}[5m])) /
+      sum(rate(http_requests_total[5m]))
+
+mongoDeployment:
+  persistence:
+    size: 20Gi
+
+mongoExpress:
+  enabled: false
+
+ingress:
+  hosts:
+    - host: zorin.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  mongoExpressHost: zorin-mongo.example.com   

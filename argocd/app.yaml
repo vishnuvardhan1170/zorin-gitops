@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: zorin-prod
+  name: zorin
   namespace: argocd
 spec:
   project: default
@@ -13,10 +13,10 @@ spec:
       releaseName: zorin
       valueFiles:
         - values.yaml
-        - values-prod.yaml
+        - values-ENV.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: zorin
+    namespace: zorin-ENV
   syncPolicy:
     automated:
       prune: true

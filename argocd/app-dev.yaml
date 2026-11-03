@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: zorin-dev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/vishnuvardhan1170/zorin-gitops.git
+    targetRevision: main
+    path: helm
+    helm:
+      releaseName: zorin
+      valueFiles:
+        - values.yaml
+        - values-dev.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: zorin-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true
+  revisionHistoryLimit: 5   

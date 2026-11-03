@@ -1,4 +1,5 @@
 {{- if .Values.rollouts.enabled }}
+{{- if .Values.rollouts.analysis.enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
@@ -9,9 +10,11 @@ spec:
     - name: success-rate
       interval: {{ .Values.rollouts.analysis.interval }}
       successCondition: {{ .Values.rollouts.analysis.successCondition | quote }}
-      failureLimit: 3
+      failureLimit: {{ .Values.rollouts.analysis.failureLimit | default 3 }}
       provider:
         prometheus:
           address: {{ .Values.rollouts.analysis.prometheusAddress }}
-          query: {{ .Values.rollouts.analysis.query | indent 10 }}
+          query: |
+{{ .Values.rollouts.analysis.query | indent 12 }}
+{{- end }}
 {{- end }}   
