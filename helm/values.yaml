@@ -1,9 +1,9 @@
 replicaCount: 1
 
 image:
-  repository: vishnusai1/zorin
+  repository: ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com/zorin-app
   tag: "latest"
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 service:
   type: ClusterIP
