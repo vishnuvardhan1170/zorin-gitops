@@ -1,4 +1,97 @@
 {{- if .Values.rollouts.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "zorin.fullname" . }}-web-stable
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "zorin.labels" . | nindent 4 }}
+    app: zorin-web
+spec:
+  selector:
+    app: zorin-web
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "zorin.fullname" . }}-web-canary
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "zorin.labels" . | nindent 4 }}
+    app: zorin-web
+spec:
+  selector:
+    app: zorin-web
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ include "zorin.fullname" . }}-web
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "zorin.labels" . | nindent 4 }}
+    app: zorin-web
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: zorin-web
+  template:
+    metadata:
+      labels:
+        {{- include "zorin.selectorLabels" . | nindent 8 }}
+        app: zorin-web
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      containers:
+        - name: web
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+              name: http
+          envFrom:
+            - configMapRef:
+                name: {{ include "zorin.fullname" . }}-config
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+  strategy:
+    canary:
+      canaryService: {{ include "zorin.fullname" . }}-web-canary
+      stableService: {{ include "zorin.fullname" . }}-web-stable
+      {{- if .Values.rollouts.analysis.enabled }}
+      analysis:
+        templates:
+          - templateName: success-rate
+      {{- end }}
+      steps:
+        {{- toYaml .Values.rollouts.strategy.canary.steps | nindent 8 }}
+---
 {{- if .Values.rollouts.analysis.enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate

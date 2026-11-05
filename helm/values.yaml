@@ -80,7 +80,7 @@ mongoExpress:
       memory: 256Mi
 
 ingress:
-  enabled: true
+  enabled: false
   className: alb
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
@@ -100,4 +100,4 @@ serviceAccount:
 namespace: zorin
 
 monitoring:
-  enabled: true   
+  enabled: false
