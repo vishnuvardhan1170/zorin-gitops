@@ -17,4 +17,7 @@ rollouts:
   enabled: false
 
 ingress:
-  enabled: false   
+  enabled: false
+
+mongoExpress:
+  enabled: true

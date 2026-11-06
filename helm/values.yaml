@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com/zorin-app
+  repository: YOUR_AWS_ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com/zorin-app
   tag: "latest"
   pullPolicy: Always
 
@@ -36,10 +36,10 @@ rollouts:
         - pause: { duration: 5m }
         - setWeight: 100
   analysis:
-    enabled: true
+    enabled: false
     interval: 1m
     successCondition: "result[0] >= 0.95"
-    prometheusAddress: "http://prometheus-kube-prometheus-prometheus.monitoring.svc:9090"
+    prometheusAddress: "http://zorin-prometheus.zorin.svc:9090"
     query: |
       sum(rate(http_requests_total{status!~"5.."}[5m])) /
       sum(rate(http_requests_total[5m]))

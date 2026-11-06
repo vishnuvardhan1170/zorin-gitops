@@ -12,7 +12,7 @@ spec:
     app: zorin-web
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
+      targetPort: {{ .Values.service.targetPort }}
       protocol: TCP
       name: http
 ---
@@ -29,7 +29,7 @@ spec:
     app: zorin-web
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
+      targetPort: {{ .Values.service.targetPort }}
       protocol: TCP
       name: http
 ---
@@ -70,13 +70,13 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:
             httpGet:
-              path: /
+              path: /health
               port: {{ .Values.service.targetPort }}
             initialDelaySeconds: 10
             periodSeconds: 15
           readinessProbe:
             httpGet:
-              path: /
+              path: /health
               port: {{ .Values.service.targetPort }}
             initialDelaySeconds: 5
             periodSeconds: 10
@@ -110,4 +110,4 @@ spec:
           query: |
 {{ .Values.rollouts.analysis.query | indent 12 }}
 {{- end }}
-{{- end }}   
+{{- end }}

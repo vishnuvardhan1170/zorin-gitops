@@ -2,6 +2,9 @@ namespace: zorin
 
 replicaCount: 2
 
+image:
+  pullPolicy: Always
+
 resources:
   requests:
     cpu: 250m
@@ -24,15 +27,22 @@ rollouts:
         - setWeight: 100
   analysis:
     enabled: false
-    interval: 1m
-    successCondition: "result[0] >= 0.95"
-    failureLimit: 3
 
 mongoDeployment:
+  auth:
+    enabled: true
+    username: admin
+    password: "zorin-mongo-2024"
+  config:
+    MONGO_URI: "mongodb://admin:zorin-mongo-2024@zorin-mongo:27017/zorin"
   persistence:
     size: 20Gi
 
+mongoExpress:
+  enabled: false
+
 ingress:
+  enabled: true
   hosts:
     - host: zorin.example.com
       paths:

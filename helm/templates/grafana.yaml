@@ -1,5 +1,15 @@
 {{- if .Values.monitoring.enabled }}
 apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "zorin.fullname" . }}-grafana-creds
+  namespace: {{ .Values.namespace }}
+type: Opaque
+stringData:
+  GF_SECURITY_ADMIN_USER: "admin"
+  GF_SECURITY_ADMIN_PASSWORD: "change-me-in-prod"
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "zorin.fullname" . }}-grafana-ds
@@ -35,11 +45,9 @@ spec:
           image: grafana/grafana:10.4.0
           ports:
             - containerPort: 3000
-          env:
-            - name: GF_SECURITY_ADMIN_USER
-              value: admin
-            - name: GF_SECURITY_ADMIN_PASSWORD
-              value: admin123
+          envFrom:
+            - secretRef:
+                name: {{ include "zorin.fullname" . }}-grafana-creds
           volumeMounts:
             - name: storage
               mountPath: /var/lib/grafana

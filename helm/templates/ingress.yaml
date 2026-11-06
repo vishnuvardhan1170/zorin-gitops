@@ -19,7 +19,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ include "zorin.fullname" $ }}-web
+                name: {{ include "zorin.fullname" $ }}-web{{ if $.Values.rollouts.enabled }}-stable{{ end }}
                 port:
                   name: http
           {{- end }}
@@ -34,11 +34,5 @@ spec:
                 name: {{ include "zorin.fullname" . }}-mongo-express
                 port:
                   name: http
-    {{- if .Values.rollouts.enabled }}
-                  name: {{ include "zorin.fullname" . }}-stable
-    {{- else }}
-                  name: {{ include "zorin.fullname" . }}
-    {{- end }}
-
     {{- end }}
 {{- end }}

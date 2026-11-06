@@ -43,6 +43,7 @@ spec:
       labels:
         app: prometheus
     spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       containers:
         - name: prometheus
           image: prom/prometheus:v2.53.0

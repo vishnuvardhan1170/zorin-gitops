@@ -1,6 +1,6 @@
 {{- if .Values.mongoDeployment.enabled }}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "zorin.fullname" . }}-mongo
   namespace: {{ .Values.namespace }}
@@ -8,6 +8,7 @@ metadata:
     {{- include "zorin.labels" . | nindent 4 }}
     app: zorin-mongo
 spec:
+  serviceName: {{ include "zorin.fullname" . }}-mongo
   replicas: 1
   selector:
     matchLabels:
@@ -43,8 +44,16 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.mongoDeployment.resources | nindent 12 }}
-      volumes:
-        - name: mongo-storage
-          persistentVolumeClaim:
-            claimName: {{ include "zorin.fullname" . }}-mongo-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-storage
+      spec:
+        accessModes:
+          {{- toYaml .Values.mongoDeployment.persistence.accessModes | nindent 10 }}
+        resources:
+          requests:
+            storage: {{ .Values.mongoDeployment.persistence.size }}
+        {{- if .Values.mongoDeployment.persistence.storageClassName }}
+        storageClassName: {{ .Values.mongoDeployment.persistence.storageClassName }}
+        {{- end }}
 {{- end }}

@@ -24,4 +24,4 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - PruneLast=true
-  revisionHistoryLimit: 5   
+  revisionHistoryLimit: 5
