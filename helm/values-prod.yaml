@@ -30,11 +30,9 @@ rollouts:
 
 mongoDeployment:
   auth:
-    enabled: true
-    username: admin
-    password: "zorin-mongo-2024"
+    enabled: false
   config:
-    MONGO_URI: "mongodb://admin:zorin-mongo-2024@zorin-mongo:27017/zorin"
+    MONGO_URI: "mongodb://zorin-mongo:27017/zorin"
   persistence:
     size: 20Gi
 
