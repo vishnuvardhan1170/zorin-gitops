@@ -28,11 +28,12 @@ rollouts:
   analysis:
     enabled: false
 
+config:
+  MONGO_URI: "mongodb://zorin-mongo:27017/zorin"
+
 mongoDeployment:
   auth:
     enabled: false
-  config:
-    MONGO_URI: "mongodb://zorin-mongo:27017/zorin"
   persistence:
     size: 20Gi
 
