@@ -1,14 +1,16 @@
+---
 replicaCount: 1
 
 image:
-  repository: YOUR_AWS_ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com/zorin-app
+  repository: 882088608073.dkr.ecr.ap-southeast-2.amazonaws.com/zorin-app
   tag: "latest"
   pullPolicy: Always
 
 service:
-  type: ClusterIP
+  type: NodePort
   port: 80
   targetPort: 8000
+  nodePort: 30080
 
 config:
   MONGO_URI: "mongodb://zorin-mongo:27017/zorin"
@@ -53,7 +55,7 @@ mongoDeployment:
     enabled: false
   persistence:
     enabled: true
-    size: 10Gi
+    size: 5Gi
     accessModes:
       - ReadWriteOnce
     storageClassName: ""
@@ -66,32 +68,7 @@ mongoDeployment:
       memory: 1Gi
 
 mongoExpress:
-  enabled: true
-  image:
-    repository: mongo-express
-    tag: "1.0.2-20"
-  port: 8081
-  resources:
-    requests:
-      cpu: 50m
-      memory: 64Mi
-    limits:
-      cpu: 200m
-      memory: 256Mi
-
-ingress:
   enabled: false
-  className: alb
-  annotations:
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-    alb.ingress.kubernetes.io/target-type: ip
-  hosts:
-    - host: zorin.example.com
-      paths:
-        - path: /
-          pathType: Prefix
-  mongoExpressHost: zorin-mongo.example.com
 
 serviceAccount:
   create: true

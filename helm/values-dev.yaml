@@ -1,3 +1,4 @@
+---
 namespace: zorin-dev
 
 replicaCount: 1
