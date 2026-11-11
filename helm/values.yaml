@@ -2,7 +2,7 @@
 replicaCount: 1
 
 image:
-  repository: asia-south1-docker.pkg.dev/your-gcp-project/zorin/zorin-app
+  repository: asia-south1-docker.pkg.dev/zorin-demo-514410/zorin/zorin-app
   tag: "changeme"
   pullPolicy: Always
 
