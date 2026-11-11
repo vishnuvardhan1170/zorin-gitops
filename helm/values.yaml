@@ -2,8 +2,8 @@
 replicaCount: 1
 
 image:
-  repository: us-central1-docker.pkg.dev/YOUR_PROJECT_ID/zorin-app/zorin-app
-  tag: "latest"
+  repository: asia-south1-docker.pkg.dev/your-gcp-project/zorin/zorin-app
+  tag: "changeme"
   pullPolicy: Always
 
 service:
