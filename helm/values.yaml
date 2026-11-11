@@ -2,7 +2,7 @@
 replicaCount: 1
 
 image:
-  repository: 882088608073.dkr.ecr.ap-south-1.amazonaws.com/zorin-app
+  repository: us-central1-docker.pkg.dev/YOUR_PROJECT_ID/zorin-app/zorin-app
   tag: "latest"
   pullPolicy: Always
 
@@ -21,12 +21,11 @@ resources:
     cpu: 100m
     memory: 128Mi
   limits:
-    cpu: 500m
-    memory: 512Mi
+    cpu: "1"
+    memory: 1Gi
 
-# --- Canary / Rollouts ---
 rollouts:
-  enabled: false
+  enabled: true
   strategy:
     canary:
       steps:
@@ -39,12 +38,6 @@ rollouts:
         - setWeight: 100
   analysis:
     enabled: false
-    interval: 1m
-    successCondition: "result[0] >= 0.95"
-    prometheusAddress: "http://zorin-prometheus.zorin.svc:9090"
-    query: |
-      sum(rate(http_requests_total{status!~"5.."}[5m])) /
-      sum(rate(http_requests_total[5m]))
 
 mongoDeployment:
   enabled: true
@@ -77,4 +70,4 @@ serviceAccount:
 namespace: zorin
 
 monitoring:
-  enabled: false
+  enabled: false   

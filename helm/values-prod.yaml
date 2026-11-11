@@ -1,7 +1,7 @@
 ---
 namespace: zorin
 
-replicaCount: 2
+replicaCount: 1
 
 image:
   pullPolicy: Always
@@ -36,22 +36,7 @@ mongoDeployment:
   auth:
     enabled: false
   persistence:
-    size: 20Gi
+    size: 5Gi
 
 mongoExpress:
-  enabled: false
-
-ingress:
-  enabled: true
-  hosts:
-    - host: zorin.example.com
-      paths:
-        - path: /
-          pathType: Prefix
-
-
-# run this before first sync on eks clusteer
-# kubectl create namespace argo-rollouts
-# kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
-# kubectl wait --for=condition=Established crd/rollouts.argoproj.io --timeout=90s
-# kubectl -n argo-rollouts rollout status deployment/argo-rollouts
+  enabled: false   

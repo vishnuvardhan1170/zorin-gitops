@@ -15,10 +15,4 @@ resources:
     memory: 256Mi
 
 rollouts:
-  enabled: false
-
-ingress:
-  enabled: false
-
-mongoExpress:
-  enabled: true
+  enabled: false   
