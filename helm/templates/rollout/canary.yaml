@@ -13,6 +13,7 @@ spec:
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetPort }}
+      nodePort: {{ .Values.service.nodePort }}
       protocol: TCP
       name: http
 ---
@@ -30,6 +31,7 @@ spec:
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetPort }}
+      nodePort: {{ .Values.service.nodePort }}
       protocol: TCP
       name: http
 ---
@@ -45,7 +47,7 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: zorin-web
+    app: zorin-web
   template:
     metadata:
       labels:
@@ -110,4 +112,4 @@ spec:
           query: |
 {{ .Values.rollouts.analysis.query | indent 12 }}
 {{- end }}
-{{- end }}
+{{- end }}   
