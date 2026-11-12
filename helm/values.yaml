@@ -1,21 +1,17 @@
 ---
 replicaCount: 1
-
 image:
   repository: asia-south1-docker.pkg.dev/zorin-demo-514410/zorin/zorin-app
-  tag: "changeme"
+  tag: "5462cfc47425baf3266d31cda9ed219a901dcb10"
   pullPolicy: Always
-
 service:
   type: NodePort
   port: 80
   targetPort: 8000
   nodePort: 30080
-
 config:
   MONGO_URI: "mongodb://zorin-mongo:27017/zorin"
   MONGO_DB: "zorin"
-
 resources:
   requests:
     cpu: 100m
@@ -23,22 +19,20 @@ resources:
   limits:
     cpu: "1"
     memory: 1Gi
-
 rollouts:
   enabled: true
   strategy:
     canary:
       steps:
         - setWeight: 10
-        - pause: { duration: 5m }
+        - pause: {duration: 5m}
         - setWeight: 30
-        - pause: { duration: 5m }
+        - pause: {duration: 5m}
         - setWeight: 60
-        - pause: { duration: 5m }
+        - pause: {duration: 5m}
         - setWeight: 100
   analysis:
     enabled: false
-
 mongoDeployment:
   enabled: true
   image:
@@ -59,15 +53,11 @@ mongoDeployment:
     limits:
       cpu: "1"
       memory: 1Gi
-
 mongoExpress:
   enabled: false
-
 serviceAccount:
   create: true
   name: zorin-sa
-
 namespace: zorin
-
 monitoring:
-  enabled: false   
+  enabled: false
